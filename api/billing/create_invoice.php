@@ -15,6 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+requireCSRF();
+
 $input = json_decode(file_get_contents('php://input'), true);
 
 $patient_id = $input['patient_id'] ?? null;
@@ -31,13 +33,29 @@ if (!$patient_id || !$reference_type || !$reference_id || $amount <= 0) {
 $pdo = getDBConnection();
 
 try {
+    $pdo->beginTransaction();
+
     $stmt = $pdo->prepare("INSERT INTO invoices (patient_id, reference_type, reference_id, amount, status) VALUES (?, ?, ?, ?, 'pending')");
     $stmt->execute([$patient_id, $reference_type, $reference_id, $amount]);
+    $invoice_id = $pdo->lastInsertId();
 
+    // Decrement medicine stock for prescription dispense
+    if ($reference_type === 'prescription') {
+        $stmt = $pdo->prepare(
+            "UPDATE medicines m
+             JOIN prescription_items pi ON m.id = pi.medicine_id
+             SET m.stock_quantity = GREATEST(0, m.stock_quantity - 1)
+             WHERE pi.prescription_id = ?"
+        );
+        $stmt->execute([$reference_id]);
+    }
+
+    $pdo->commit();
     http_response_code(201);
-    echo json_encode(['success' => true, 'invoice_id' => $pdo->lastInsertId(), 'message' => 'Invoice generated successfully']);
+    echo json_encode(['success' => true, 'invoice_id' => $invoice_id, 'message' => 'Invoice generated and stock updated']);
 
 } catch (PDOException $e) {
+    if ($pdo->inTransaction()) $pdo->rollBack();
     http_response_code(500);
     echo json_encode(['error' => 'Internal Server Error']);
 }

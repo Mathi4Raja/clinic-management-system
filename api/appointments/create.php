@@ -16,6 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+requireCSRF();
+
 $input = json_decode(file_get_contents('php://input'), true);
 
 $patient_id = $input['patient_id'] ?? null;
@@ -52,7 +54,8 @@ try {
         $end->format('H:i:s')
     ]);
 
-    echo json_encode(['success' => true, 'message' => 'Appointment scheduled']);
+    http_response_code(201);
+    echo json_encode(['success' => true, 'appointment_id' => (int)$pdo->lastInsertId(), 'message' => 'Appointment scheduled']);
 
 } catch (PDOException $e) {
     http_response_code(500);

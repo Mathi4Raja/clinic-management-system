@@ -1,84 +1,83 @@
-:root {
-    --bg-dark: #0a0a0c;
-    --card-bg: rgba(255, 255, 255, 0.03);
-    --border-glow: rgba(59, 130, 246, 0.2);
-    --text-main: #f8fafc;
-    --text-muted: #94a3b8;
-    --accent: #3b82f6;
-    --accent-glow: rgba(59, 130, 246, 0.5);
-}
+/* Landing Page Styles — Light Theme for Clinic CMS */
 
 body {
-    background-color: var(--bg-dark);
     margin: 0;
     overflow-x: hidden;
 }
 
+/* Modern white card with subtle shadow for light backgrounds */
 .glass-card {
-    background: var(--card-bg);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #ffffff;
+    border: 1px solid #f1f5f9;
     border-radius: 1.5rem;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
 .glass-card:hover {
-    border-color: var(--accent);
-    box-shadow: 0 0 30px var(--border-glow);
+    border-color: rgba(234, 88, 12, 0.25);
+    box-shadow: 0 20px 40px rgba(234, 88, 12, 0.08), 0 8px 16px rgba(0, 0, 0, 0.06);
     transform: translateY(-4px);
 }
 
+/* Warm orange hero background gradient */
 .hero-gradient {
-    background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+    background: radial-gradient(ellipse at 65% 50%, rgba(234, 88, 12, 0.07) 0%, rgba(251, 146, 60, 0.04) 40%, transparent 70%);
 }
 
+/* Dark slate text gradient — works on light backgrounds */
 .text-gradient {
-    background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #334155 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
+/* Orange button gradient */
+.orange-gradient {
+    background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+    transition: all 0.3s ease;
+}
+
+.orange-gradient:hover {
+    background: linear-gradient(135deg, #c2410c 0%, #ea580c 100%);
+}
+
+/* Float animation for hero graphic */
 @keyframes float {
-    0% {
-        transform: translateY(0px);
-    }
-
-    50% {
-        transform: translateY(-20px);
-    }
-
-    100% {
-        transform: translateY(0px);
-    }
+    0%   { transform: translateY(0px); }
+    50%  { transform: translateY(-18px); }
+    100% { transform: translateY(0px); }
 }
 
 .animate-float {
     animation: float 6s ease-in-out infinite;
 }
 
-.stagger-in>* {
+/* Stagger-in animation for hero text */
+.stagger-in > * {
     opacity: 0;
-    transform: translateY(20px);
-    animation: fadeIn 0.8s forwards;
+    transform: translateY(24px);
+    animation: fadeInUp 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-@keyframes fadeIn {
+.stagger-in > *:nth-child(1) { animation-delay: 0.1s; }
+.stagger-in > *:nth-child(2) { animation-delay: 0.25s; }
+.stagger-in > *:nth-child(3) { animation-delay: 0.4s; }
+.stagger-in > *:nth-child(4) { animation-delay: 0.55s; }
+.stagger-in > *:nth-child(5) { animation-delay: 0.7s; }
+
+@keyframes fadeInUp {
     to {
         opacity: 1;
         transform: translateY(0);
     }
 }
 
+/* Nav link hover underline effect */
 .nav-link {
     position: relative;
-    color: var(--text-muted);
     transition: color 0.3s;
-}
-
-.nav-link:hover {
-    color: var(--text-main);
 }
 
 .nav-link::after {
@@ -88,10 +87,20 @@ body {
     height: 2px;
     bottom: -4px;
     left: 0;
-    background-color: var(--accent);
+    background-color: #ea580c;
     transition: width 0.3s;
 }
 
 .nav-link:hover::after {
     width: 100%;
+}
+
+/* Toast notification */
+#cms-notification {
+    animation: slideInRight 0.3s ease forwards;
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100px); opacity: 0; }
+    to   { transform: translateX(0); opacity: 1; }
 }

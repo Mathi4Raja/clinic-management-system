@@ -25,7 +25,7 @@ try {
     $params = [];
 
     if ($role === ROLE_PATIENT) {
-        $sql .= " JOIN patient_profiles p2 ON a.patient_id = p2.id WHERE p2.user_id = ?";
+        $sql .= " WHERE p.user_id = ?";
         $params[] = $user_id;
     } elseif ($role === ROLE_DOCTOR) {
         $sql .= " WHERE d.user_id = ?";

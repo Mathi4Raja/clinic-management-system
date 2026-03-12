@@ -2,12 +2,60 @@
  * Auth UI & Logic
  */
 
-document.addEventListener('DOMContentLoaded', () => {
-    const loginForm = document.getElementById('login-form');
-    const loginError = document.getElementById('login-error');
+// Make showDashboard globally accessible
+window.showDashboard = function(user) {
+    console.log("Transitioning to dashboard for role:", user.role);
+    
+    // Elements
+    const landingNav = document.getElementById('landing-nav');
+    const landingView = document.getElementById('landing-view');
     const authContainer = document.getElementById('auth-container');
     const dashboardContainer = document.getElementById('dashboard-container');
+
+    // Hide Landing & Auth
+    if (landingNav) landingNav.classList.add('hidden');
+    if (landingView) landingView.classList.add('hidden');
+    if (authContainer) authContainer.classList.add('hidden');
+
+    // Show Dashboard
+    if (dashboardContainer) {
+        dashboardContainer.classList.remove('hidden');
+        dashboardContainer.classList.add('flex'); // Ensure flex is applied
+    }
+
+    // Reset scroll and update UI
+    window.scrollTo(0, 0);
+    document.body.style.overflow = 'auto';
+
+    const roleBadge = document.getElementById('role-badge');
+    const userDisplay = document.getElementById('user-display');
+    
+    if (roleBadge) roleBadge.textContent = user.role;
+    if (userDisplay) userDisplay.textContent = user.display_name || user.email || `User #${user.id}`;
+
+    // Initialize Dashboard Content based on role
+    if (window.Dashboard) {
+        window.Dashboard.init(user.role);
+    } else {
+        console.error("Dashboard controller not found");
+    }
+};
+
+document.addEventListener('DOMContentLoaded', async () => {
+    const loginForm = document.getElementById('login-form');
+    const loginError = document.getElementById('login-error');
     const logoutBtn = document.getElementById('logout-btn');
+
+    // Check for existing session on load
+    try {
+        const data = await API.request('auth/login.php', { method: 'GET' });
+        if (data.authenticated && data.user) {
+            window.showDashboard(data.user);
+        }
+    } catch (err) {
+        // Not authenticated, stay on landing
+        console.log("No active session found.");
+    }
 
     // Handle Login
     if (loginForm) {
@@ -22,13 +70,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: JSON.stringify({ email, password })
                 });
 
-                if (data.success) {
+                if (data.success && data.user) {
                     API.setCSRF(data.csrf_token);
-                    showDashboard(data.user);
+                    window.showDashboard(data.user);
+                } else {
+                    throw new Error("Login failed: Invalid user data received");
                 }
             } catch (err) {
-                loginError.textContent = err.message;
-                loginError.classList.remove('hidden');
+                if (loginError) {
+                    loginError.textContent = err.message;
+                    loginError.classList.remove('hidden');
+                }
             }
         });
     }
@@ -55,22 +107,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 if (data.success) {
-                    // Show success and switch to login
-                    signupError.textContent = data.message;
-                    signupError.classList.remove('hidden', 'text-red-500');
-                    signupError.classList.add('text-green-600', 'bg-green-50');
+                    if (signupError) {
+                        signupError.textContent = data.message;
+                        signupError.classList.remove('hidden', 'text-red-500');
+                        signupError.classList.add('text-green-600', 'bg-green-50');
+                    }
 
                     setTimeout(() => {
-                        window.toggleAuth('login');
+                        if (window.toggleAuth) window.toggleAuth('login');
                         document.getElementById('login-email').value = payload.email;
-                        signupError.classList.add('hidden');
-                        signupError.classList.remove('text-green-600', 'bg-green-50');
-                        signupError.classList.add('text-red-500');
+                        if (signupError) {
+                            signupError.classList.add('hidden');
+                            signupError.classList.remove('text-green-600', 'bg-green-50');
+                            signupError.classList.add('text-red-500');
+                        }
                     }, 2000);
                 }
             } catch (err) {
-                signupError.textContent = err.message;
-                signupError.classList.remove('hidden');
+                if (signupError) {
+                    signupError.textContent = err.message;
+                    signupError.classList.remove('hidden');
+                }
             }
         });
     }
@@ -80,38 +137,10 @@ document.addEventListener('DOMContentLoaded', () => {
         logoutBtn.addEventListener('click', async () => {
             try {
                 await API.request('auth/logout.php', { method: 'POST' });
-                location.reload(); // Refresh to clear state
+                location.reload(); 
             } catch (err) {
                 console.error('Logout failed');
             }
         });
-    }
-
-    /**
-     * Transition to Dashboard View
-     * @param {object} user 
-     */
-    function showDashboard(user) {
-        // Hide Landing View
-        const landingNav = document.getElementById('landing-nav');
-        const landingView = document.getElementById('landing-view');
-        if (landingNav) landingNav.classList.add('hidden');
-        if (landingView) landingView.classList.add('hidden');
-
-        // Show Dashboard
-        authContainer.classList.add('hidden');
-        dashboardContainer.classList.remove('hidden');
-
-        // Reset scroll and update UI
-        window.scrollTo(0, 0);
-        document.body.style.overflow = 'auto';
-
-        document.getElementById('role-badge').textContent = user.role;
-        document.getElementById('user-display').textContent = `User: #${user.id}`;
-
-        // Initialize Dashboard Content based on role
-        if (window.Dashboard) {
-            window.Dashboard.init(user.role);
-        }
     }
 });

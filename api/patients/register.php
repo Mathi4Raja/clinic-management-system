@@ -17,6 +17,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+requireCSRF();
+
 $input = json_decode(file_get_contents('php://input'), true);
 
 // Validation
@@ -46,7 +48,7 @@ try {
         $user_id,
         $input['full_name'],
         $input['dob'],
-        $input['gender'],
+        strtolower($input['gender']),
         $input['phone']
     ]);
     $patient_profile_id = $pdo->lastInsertId();
@@ -57,10 +59,11 @@ try {
 
 } catch (PDOException $e) {
     $pdo->rollBack();
-    http_response_code(500);
     if ($e->getCode() == 23000) {
+        http_response_code(409);
         echo json_encode(['error' => 'Email already exists']);
     } else {
+        http_response_code(500);
         echo json_encode(['error' => 'Internal Server Error']);
     }
 }

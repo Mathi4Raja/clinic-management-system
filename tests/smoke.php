@@ -40,7 +40,11 @@ try {
 // 3. Schema Integrity (Key Tables)
 if (isset($pdo)) {
     echo "[3/4] Validating Core Schema... ";
-    $tables = ['users', 'patient_profiles', 'doctors', 'appointments', 'medical_records'];
+    $tables = [
+        'users', 'patient_profiles', 'doctors', 'appointments',
+        'medical_records', 'prescriptions', 'prescription_items',
+        'medicines', 'lab_tests', 'invoices', 'staff_profiles', 'reviews'
+    ];
     $missing = [];
     foreach ($tables as $table) {
         $stmt = $pdo->query("SHOW TABLES LIKE '$table'");
@@ -49,7 +53,7 @@ if (isset($pdo)) {
     }
 
     if (empty($missing)) {
-        echo "✅ All 11 entities verified\n";
+        echo "✅ All 12 entities verified\n";
     } else {
         echo "❌ Missing tables: " . implode(', ', $missing) . "\n";
         $errors[] = "Schema incomplete";
@@ -60,9 +64,23 @@ if (isset($pdo)) {
 echo "[4/4] Checking Core API files... ";
 $api_files = [
     'auth/login.php',
+    'auth/register.php',
+    'auth/logout.php',
     'patients/register.php',
+    'patients/list.php',
+    'patients/review.php',
     'appointments/list.php',
-    'admin/audit.php'
+    'appointments/create.php',
+    'appointments/update.php',
+    'doctors/list.php',
+    'lab/tests.php',
+    'lab/upload_report.php',
+    'pharmacy/prescriptions.php',
+    'medical/create_record.php',
+    'billing/create_invoice.php',
+    'medicines/list.php',
+    'admin/audit.php',
+    'admin/staff.php',
 ];
 $missing_files = [];
 foreach ($api_files as $file) {

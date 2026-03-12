@@ -127,6 +127,49 @@ CREATE TABLE IF NOT EXISTS `invoices` (
   FOREIGN KEY (`patient_id`) REFERENCES `patient_profiles`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- 12. Reviews Table
+CREATE TABLE IF NOT EXISTS `reviews` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `patient_id` INT NOT NULL,
+  `doctor_id` INT NOT NULL,
+  `rating` TINYINT NOT NULL CHECK (`rating` BETWEEN 1 AND 5),
+  `comment` TEXT,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`patient_id`) REFERENCES `patient_profiles`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`doctor_id`) REFERENCES `doctors`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 13. Clinic Settings Table (key-value store for admin configuration)
+CREATE TABLE IF NOT EXISTS `clinic_settings` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `setting_key` VARCHAR(100) NOT NULL UNIQUE,
+  `setting_value` TEXT,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Default Settings Seed
+INSERT IGNORE INTO `clinic_settings` (`setting_key`, `setting_value`) VALUES
+  ('clinic_name',              'Clinic CMS'),
+  ('clinic_address',           '123 Medical Drive, Health City'),
+  ('clinic_phone',             '+1 (555) 000-0000'),
+  ('clinic_email',             'admin@clinic.com'),
+  ('smtp_from_name',           'Clinic CMS'),
+  ('smtp_host',                ''),
+  ('smtp_port',                '587'),
+  ('smtp_user',                ''),
+  ('smtp_pass',                ''),
+  ('smtp_encryption',          'tls'),
+  ('email_notifications',      '1');
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `patient_id` INT NOT NULL,
+  `doctor_id` INT NOT NULL,
+  `rating` TINYINT NOT NULL CHECK (`rating` BETWEEN 1 AND 5),
+  `comment` TEXT,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`patient_id`) REFERENCES `patient_profiles`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`doctor_id`) REFERENCES `doctors`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- ==========================================
 -- DEDICATED TEST CREDENTIALS
 -- ==========================================
@@ -208,4 +251,20 @@ INSERT INTO `medicines` (`name`, `generic_name`, `price`, `stock_quantity`) VALU
 ('Amoxicillin', 'Amoxil', 45.00, 100),
 ('Ibuprofen', 'Advil', 12.50, 250),
 ('Paracetamol', 'Panadol', 8.00, 500),
-('Metformin', 'Glucophage', 30.00, 150);
+('Metformin', 'Glucophage', 30.00, 150),
+('Omeprazole', 'Prilosec', 22.00, 80);
+
+-- Sample Appointments (linking test doctor and test patient for immediate use)
+-- Requires @test_doc_uid (doctor row ID) and @test_pat_uid (patient_profiles row ID)
+SET @test_doc_row = (SELECT id FROM doctors WHERE user_id = @test_doc_uid LIMIT 1);
+SET @test_pat_row = (SELECT id FROM patient_profiles WHERE user_id = @test_pat_uid LIMIT 1);
+
+INSERT INTO `appointments` (`patient_id`, `doctor_id`, `appointment_date`, `start_time`, `end_time`, `status`) VALUES
+(@test_pat_row, @test_doc_row, CURDATE(), '09:00:00', '09:30:00', 'scheduled'),
+(@test_pat_row, @test_doc_row, CURDATE(), '10:00:00', '10:30:00', 'scheduled'),
+(@test_pat_row, @test_doc_row, DATE_SUB(CURDATE(), INTERVAL 2 DAY), '11:00:00', '11:30:00', 'completed');
+
+-- Sample Lab Tests (pending, for lab tech to process)
+INSERT INTO `lab_tests` (`patient_id`, `doctor_id`, `test_type`, `status`) VALUES
+(@test_pat_row, @test_doc_row, 'Complete Blood Count (CBC)', 'pending'),
+(@test_pat_row, @test_doc_row, 'Blood Glucose Fasting', 'pending');

@@ -39,5 +39,22 @@ const ROLE_RECEPTIONIST = 'receptionist';
 const ROLE_LAB_TECH = 'lab_tech';
 const ROLE_PHARMACIST = 'pharmacist';
 
-const ALL_ROLES = [ROLE_ADMIN, ROLE_DOCTOR, ROLE_PATIENT, ROLE_RECEPTIONIST, ROLE_LAB_TECH, ROLE_PHARMACIST];
-const STAFF_ROLES = [ROLE_ADMIN, ROLE_DOCTOR, ROLE_RECEPTIONIST, ROLE_LAB_TECH, ROLE_PHARMACIST];
+const ALL_ROLES    = [ROLE_ADMIN, ROLE_DOCTOR, ROLE_PATIENT, ROLE_RECEPTIONIST, ROLE_LAB_TECH, ROLE_PHARMACIST];
+const STAFF_ROLES  = [ROLE_ADMIN, ROLE_DOCTOR, ROLE_RECEPTIONIST, ROLE_LAB_TECH, ROLE_PHARMACIST];
+
+/**
+ * Validate CSRF token for state-changing requests.
+ * Call this after authorize() on any endpoint that mutates data.
+ */
+function requireCSRF() {
+    $method = $_SERVER['REQUEST_METHOD'];
+    if (in_array($method, ['POST', 'PUT', 'PATCH', 'DELETE'])) {
+        $token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+        if (!validateCSRFToken($token)) {
+            header('Content-Type: application/json');
+            http_response_code(403);
+            echo json_encode(['error' => 'Invalid or missing CSRF token']);
+            exit;
+        }
+    }
+}

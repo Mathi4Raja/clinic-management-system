@@ -15,6 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+requireCSRF();
+
 $input = json_decode(file_get_contents('php://input'), true);
 
 $patient_id = $input['patient_id'] ?? null;

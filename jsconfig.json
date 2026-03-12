@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "None",
+    "checkJs": false,
+    "noEmit": true,
+    "lib": ["ES2020", "DOM"]
+  },
+  "include": ["js/**/*.js", "assets/**/*.js"],
+  "exclude": ["api/**", "tests/**", "node_modules"]
+}

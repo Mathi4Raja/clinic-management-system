@@ -45,13 +45,13 @@ echo "=== Starting Security Probes ===\n\n";
 
 
 // 1. CSRF/Auth Boundary Probing
-// Attempt to login with bad creds / missing token.
+// Attempt to login with bad creds.
 // The server SHOULD reject the POST request cleanly with a 401 Unauthorized.
 $csrfTest = testSecurityBoundary(
     "CSRF/Auth Boundary Bypass Attempt",
     "$baseUrl/auth/login.php",
-    ['email' => 'test@example.com', 'password' => 'password'],
-    ['Content-Type: application/x-www-form-urlencoded'],
+    ['email' => 'test@example.com', 'password' => 'wrongpassword'],
+    ['Content-Type: application/json'],
     401
 );
 if (!$csrfTest)
@@ -79,7 +79,7 @@ $sqliTest = testSecurityBoundary(
     "Basic SQL Injection Payload on Login",
     "$baseUrl/auth/login.php",
     ['email' => "' OR '1'='1", 'password' => "' OR '1'='1"],
-    ['Content-Type: application/x-www-form-urlencoded'],
+    ['Content-Type: application/json'],
     401 // Fails cleanly with generic Unauthorized, never 500.
 );
 if (!$sqliTest)

@@ -1,74 +1,70 @@
-# Implementation Plan: Clinic Management System (CMS)
+# Role & Objective
+Act as an expert Full-Stack PHP Developer and UI/UX Engineer. Your task is to build a Clinic Management System (CMS) based on the exact specifications provided below. 
 
-This detailed plan outlines the technical strategy for building the CMS, from database normalization to role-based access control and frontend interactivity.
-
-## 1. Project Overview
-- **Objective**: Build a scalable, role-adaptive clinic management system.
-- **Tech Stack**: PHP 8.x (PDO), MySQL, Tailwind CSS, ES6+ JavaScript.
-- **Visual Direction**: Modern, high-end design using soft gradients and premium spacing.
-
-## 2. Technical Architecture
-
-### A. Database Layer
-- **Schema**: 11 normalized tables ensuring strict data integrity.
-- **Constraints**: Use of Foreign Keys and ENUM types for status/roles.
-- **Security**: Mandatory use of PDO with `EMULATE_PREPARES => false`.
-
-### B. Security Framework
-- **Session Management**: Regeneration on login, HttpOnly, and SameSite=Strict cookies.
-- **CSRF Protection**: Token validation required for all state-changing requests (POST/PUT/DELETE).
-- **Authentication**: `password_hash` and `password_verify` with BCRYPT.
-- **RBAC**: Application-level middleware to enforce principle-of-least-privilege.
-
-### C. Frontend Architecture
-- **Asynchronous Flow**: Exclusively Fetch API for all data interactions.
-- **State Management**: Vanilla JS modules to handle UI states and modal routing.
-- **Styling**: Tailwind utility classes for fluid, performant visual changes (transitions/hover states).
-
-## 3. Core Modules & Phase Breakdown
-
-### Phase 2: Database Layer Implementation
-- [x] Create `database_schema.sql` with indices and constraints.
-- [x] Set up `api/config.php` (PDO Utility & Security Helpers).
-
-### Phase 3: Core Security & Authentication
-- [x] RBAC Middleware implementation.
-- [x] Login/Logout API endpoints.
-- [x] CSRF/Validation logic.
-
-### Phase 4: Foundational UI & Dashboard Shell
-- [x] Tailwind CSS integration.
-- [x] Role-adaptive sidebar/navigation.
-- [x] Main Fetch API wrapper (`js/api.js`).
-
-### Phase 5: Role-Specific Modules (Clinical) [x]
-- [x] Doctor Portal: Medical records, clinical notes, prescriptions, and lab orders.
-- [x] Lab Technician: Diagnostic report management and file uploads.
-
-### Phase 6: Front Desk & Support Modules [x]
-- [x] Receptionist: Patient onboarding, real-time queueing, and alerts.
-- [x] Pharmacist Dashboard: Medication dispensing and invoice generation.
-- [x] Patient Interface: Self-service appointments and reviews.
-
-### Phase 7: Final Audit & Hardening [x]
-- [x] Performance profiling and data load testing.
-- [x] End-to-end security audit and walkthrough.
-
-### Phase 8: System Testing & QA [x]
-- [x] Automated Smoke Tests (Platform & Connectivity).
-- [x] Automated Sanity Test Suite (End-to-End Workflow).
-- [x] Manual Sanity Test Protocol (Documentation).
-
-### Phase 9: Advanced Testing & A2B [x]
-- [x] Functional Tests (Critical Logic & Inventory).
-- [x] Non-Functional Tests (Performance Benchmarking).
-- [x] A2B Testing Framework (UI optimization engine).
-- [x] Master User-Flow Script (Full ecosystem verification).
-
-### Phase 10: Ultra-High-Fidelity Testing [x]
-- [x] Stress & Concurrency Simulation (Load resilience).
-- [x] Security Fuzzing (Validation hardening).
-- [x] Stateful Integrity Auditor (Data consistency).
+You must adhere strictly to the technology stack, security constraints, and architectural guidelines. Do not hallucinate external libraries or use deprecated PHP functions.
 
 ---
-*Note: This plan is derived from the PRD and is subject to iterative updates in the `TRACK_TASKS.md` file.*
+
+## 1. Project Overview & Tech Stack
+* **Project Name:** Clinic Management System (CMS)
+* **Backend:** Core PHP (8.x+) using PDO for secure database interactions.
+* **Database:** MySQL (Strictly normalized relational schema).
+* **Frontend:** HTML5, Tailwind CSS (via CDN or precompiled), and Vanilla JavaScript (ES6+).
+* **Architecture:** Hierarchical API structure separating frontend views from backend logic.
+
+---
+
+## 2. UI/UX & Design Architecture constraints
+* **Visuals:** Clean, modern, and highly intuitive. Use Tailwind's utility classes for soft gradients (e.g., `bg-gradient-to-r from-gray-50 to-gray-100`) and precise spacing to deliver a high-end look.
+* **Assets:** * **Strictly Prohibited:** Heavy external icon libraries (e.g., FontAwesome) and generic AI-generated icons.
+  * **Allowed:** Exclusively use inline SVG icons styled via Tailwind classes (e.g., `w-5 h-5 text-gray-500`). AI-generated placeholder images are permitted for structural layout testing only.
+* **Interactivity:** * Use Tailwind’s transition/pseudo-class utilities (`hover:bg-blue-50`, `transition-all`, `duration-300`) for fluid state changes.
+  * Use Vanilla JS for custom DOM manipulation (modals, dropdowns). 
+  * **No Page Reloads:** All forms, dashboards, and data tables MUST submit and refresh asynchronously using the JS Fetch API.
+
+---
+
+## 3. Role-Based Access Control (RBAC)
+Enforce strict principle-of-least-privilege access:
+
+* **Admin:** Read-only access to all entities (auditing). CRUD for system staff accounts. Full access to settings, analytics, and automated email engine.
+* **Doctor:** Read-only access to Patient demographics (cannot edit/delete). Create/Update medical records, clinical notes, and prescriptions. View appointment queue. Order lab tests.
+* **Patient:** Create, View, and Cancel (not delete) personal appointments. View doctor profiles and leave reviews.
+* **Receptionist:** Register new patients and edit demographics. Full CRUD over the appointment schedule and live physical queue. Push queue alerts to doctors.
+* **Lab Technician:** View test orders. Upload lab report files and update status. Cannot delete test requests. (System auto-attaches uploaded reports to patient records).
+* **Pharmacist:** View-only access strictly to the prescription/medication list (no access to clinical notes). Calculate totals and process billing.
+
+---
+
+## 4. Normalized Database Schema
+Implement the following structure precisely to avoid messy joins:
+
+* `users` (id, email, password_hash, role, is_email_verified, created_at)
+* `patient_profiles` (id, user_id, full_name, dob, gender, phone, created_at)
+* `staff_profiles` (id, user_id, name, role_title)
+* `doctors` (id, user_id, specialization, license_number)
+* `medicines` (id, name, generic_name, price, stock_quantity)
+* `appointments` (id, patient_id, doctor_id, appointment_date, start_time, end_time, status, created_at)
+* `medical_records` (id, patient_id, doctor_id, diagnosis, clinical_notes, created_at)
+* `prescriptions` (id, record_id, created_at)
+* `prescription_items` (id, prescription_id, medicine_id, dosage, frequency)
+* `lab_tests` (id, patient_id, doctor_id, test_type, status, report_file_path, report_notes, created_at)
+* `invoices` (id, patient_id, reference_type [prescription, consultation, lab], reference_id, amount, status, created_at)
+
+---
+
+## 5. Security & Technical Architecture Guidelines
+* **API Routing:** No flat files. Route hierarchically (e.g., `/api/auth/login.php`, `/api/appointments/create.php`).
+* **Database:** PDO Prepared Statements are MANDATORY. No raw variables in SQL queries.
+* **Sessions:** Trigger `session_regenerate_id(true)` upon login. Use `SameSite=Strict`, `HttpOnly`, and `Secure` cookie parameters.
+* **CSRF:** Every POST/PUT/DELETE request must validate a CSRF token.
+* **Validation:** Strict server-side validation is mandatory. Never trust frontend validation.
+
+---
+
+## INITIAL TASK:
+Do not generate the entire application at once. For your first response, please provide ONLY the following:
+
+1. A standard directory structure for the project (separating frontend views, API endpoints, config, and assets).
+2. The complete `init.sql` script to generate the normalized database schema defined in section 4, including necessary foreign key constraints.
+3. The core `db_connect.php` file using secure PDO configurations.

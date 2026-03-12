@@ -43,7 +43,7 @@ try {
         $user_id,
         $input['full_name'],
         $input['dob'],
-        $input['gender'],
+        strtolower($input['gender']),
         $input['phone']
     ]);
 
@@ -52,10 +52,11 @@ try {
 
 } catch (PDOException $e) {
     $pdo->rollBack();
-    http_response_code(500);
     if ($e->getCode() == 23000) {
+        http_response_code(409);
         echo json_encode(['error' => 'Email already registered.']);
     } else {
+        http_response_code(500);
         echo json_encode(['error' => 'Registration failed. Please try again.']);
     }
 }

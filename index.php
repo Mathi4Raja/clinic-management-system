@@ -27,7 +27,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="js/landing.css">
+    <link rel="stylesheet" href="js/landing.css?v=3">
 </head>
 
 <body class="bg-white text-slate-900 selection:bg-orange-500/30">
@@ -71,7 +71,7 @@
                         <span
                             class="px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-600 text-xs font-bold uppercase tracking-widest mb-6 inline-block">Next-Gen
                             Clinic Management</span>
-                        <h1 class="text-5xl md:text-7xl font-bold font-['Poppins'] leading-tight text-gradient mb-6">
+                        <h1 class="text-5xl md:text-7xl font-bold font-['Poppins'] leading-tight text-slate-900 mb-6">
                             Healthcare at the speed of <span class="text-orange-500">thought.</span>
                         </h1>
                         <p class="text-lg text-slate-600 max-w-lg mb-10 leading-relaxed">
@@ -88,10 +88,37 @@
                                 Demo</button>
                         </div>
                     </div>
-                    <div class="relative animate-float">
+                    <div class="relative animate-float hidden md:block">
                         <div class="absolute -inset-10 bg-orange-500/20 blur-3xl rounded-full opacity-50"></div>
-                        <img src="assets/hero-graphic-orange.png" alt="Clinical Interface"
-                            class="relative rounded-3xl border border-orange-100 shadow-2xl">
+                        <div class="relative bg-white rounded-3xl border border-orange-100 shadow-2xl p-6 space-y-4">
+                            <!-- Mock Dashboard UI -->
+                            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-6 h-6 bg-primary rounded-md"></div>
+                                    <span class="text-xs font-bold text-slate-700">Clinic CMS</span>
+                                </div>
+                                <div class="flex space-x-1"><div class="w-2 h-2 bg-green-400 rounded-full"></div><div class="w-2 h-2 bg-yellow-400 rounded-full"></div><div class="w-2 h-2 bg-red-400 rounded-full"></div></div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-3">
+                                <div class="bg-orange-50 rounded-xl p-3 border border-orange-100"><p class="text-[10px] text-orange-600 font-bold uppercase">Patients</p><p class="text-xl font-black text-slate-900">1,248</p></div>
+                                <div class="bg-blue-50 rounded-xl p-3 border border-blue-100"><p class="text-[10px] text-blue-600 font-bold uppercase">Appts</p><p class="text-xl font-black text-slate-900">84</p></div>
+                                <div class="bg-green-50 rounded-xl p-3 border border-green-100"><p class="text-[10px] text-green-600 font-bold uppercase">Revenue</p><p class="text-xl font-black text-slate-900">$9.2k</p></div>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between bg-slate-50 rounded-xl p-3">
+                                    <div class="flex items-center space-x-2"><div class="w-7 h-7 bg-orange-100 rounded-lg flex items-center justify-center text-xs font-black text-orange-600">JD</div><span class="text-xs font-bold text-slate-700">John Doe</span></div>
+                                    <span class="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold">Completed</span>
+                                </div>
+                                <div class="flex items-center justify-between bg-slate-50 rounded-xl p-3">
+                                    <div class="flex items-center space-x-2"><div class="w-7 h-7 bg-blue-100 rounded-lg flex items-center justify-center text-xs font-black text-blue-600">MS</div><span class="text-xs font-bold text-slate-700">Maria Smith</span></div>
+                                    <span class="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-bold">Scheduled</span>
+                                </div>
+                                <div class="flex items-center justify-between bg-slate-50 rounded-xl p-3">
+                                    <div class="flex items-center space-x-2"><div class="w-7 h-7 bg-purple-100 rounded-lg flex items-center justify-center text-xs font-black text-purple-600">AK</div><span class="text-xs font-bold text-slate-700">Alex Kumar</span></div>
+                                    <span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">Lab Pending</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -297,7 +324,7 @@
                             class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all text-slate-900">
                     </div>
                     <button type="submit"
-                        class="w-full orange-gradient text-white font-bold py-5 rounded-2xl shadow-lg shadow-orange-500/20 hover:scale-[1.02] transition-all duration-300">Authorize
+                        class="w-full bg-orange-600 hover:bg-orange-700 orange-gradient text-white font-bold py-5 rounded-2xl shadow-lg shadow-orange-500/20 hover:scale-[1.02] transition-all duration-300">Authorize
                         Access</button>
                     <div id="login-error" class="hidden text-red-500 text-sm text-center mt-4 p-3 bg-red-50 rounded-xl">
                     </div>
@@ -325,9 +352,9 @@
                             <label class="block text-sm font-semibold text-slate-600 mb-1">Gender</label>
                             <select id="signup-gender" required
                                 class="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all">
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                                <option value="Other">Other</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
                             </select>
                         </div>
                         <div class="col-span-2">
@@ -342,7 +369,7 @@
                         </div>
                     </div>
                     <button type="submit"
-                        class="w-full orange-gradient text-white font-bold py-4 rounded-2xl shadow-lg shadow-orange-500/20 hover:scale-[1.02] transition-all duration-300">Create
+                        class="w-full bg-orange-600 hover:bg-orange-700 orange-gradient text-white font-bold py-4 rounded-2xl shadow-lg shadow-orange-500/20 hover:scale-[1.02] transition-all duration-300">Create
                         Patient Account</button>
                     <div id="signup-error"
                         class="hidden text-red-500 text-sm text-center mt-4 p-3 bg-red-50 rounded-xl"></div>
@@ -389,7 +416,6 @@
             <main id="dashboard-content" class="flex-grow p-6 md:p-8">
                 <!-- Dynamic Content Loads Here -->
             </main>
-            <div id="patient-interaction" class="p-6 md:p-8 pt-0"></div>
         </div>
 
         <!-- Global Modals -->
@@ -417,18 +443,24 @@
                         <p class="text-slate-500 text-sm">Secure diagnostic data entry</p>
                     </div>
                 </div>
-                <form id="upload-form" class="space-y-6">
+                <form id="upload-form" class="space-y-5">
                     <input type="hidden" name="test_id" id="upload-test-id">
                     <div>
-                        <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Diagnostic
-                            Results (PDF/Notes)</label>
-                        <textarea name="report_notes" placeholder="Enter findings or summary..." required
-                            class="w-full bg-slate-50 border-2 border-slate-100 rounded-[1.5rem] p-5 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all"
+                        <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Report
+                            File (PDF / Image — optional)</label>
+                        <input type="file" name="report_file" accept=".pdf,.jpg,.jpeg,.png"
+                            class="w-full text-sm text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-primary/10 file:text-primary file:font-bold file:cursor-pointer hover:file:bg-primary/20 transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Findings
+                            / Notes</label>
+                        <textarea name="report_notes" placeholder="Enter diagnostic findings or summary..." required
+                            class="w-full bg-slate-50 border-2 border-slate-100 rounded-[1.5rem] p-4 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all"
                             rows="4"></textarea>
                     </div>
                     <button type="submit"
                         class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/10">Submit
-                        Final Report</button>
+                        Report</button>
                 </form>
             </div>
         </div>
@@ -450,11 +482,13 @@
     <script src="js/dashboard.js"></script>
     <script>
         function showLogin() {
+            console.log("Showing login modal");
             document.getElementById('auth-container').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
             window.location.hash = 'login';
         }
         function hideLogin() {
+            console.log("Hiding login modal");
             document.getElementById('auth-container').classList.add('hidden');
             document.body.style.overflow = 'auto';
             history.pushState("", document.title, window.location.pathname + window.location.search);
